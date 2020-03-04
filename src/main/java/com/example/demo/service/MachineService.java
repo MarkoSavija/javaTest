@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import javax.transaction.Transactional;
 
 @Service
 public class MachineService {
@@ -29,10 +30,10 @@ public class MachineService {
         machineRepository.save(machine);
     }
 
+    @Transactional
     public void startMachine(Long machineId) {
         Machine machine = machineRepository.findById(machineId).orElse(null);
-        Random random = new Random();
-        int randomSeconds = random.nextInt(6) + 10;
+        int randomSeconds = generateRandomSeconds(10, 15);
         try{
             Thread.sleep(randomSeconds*1000);
         } catch (InterruptedException ie) {
@@ -42,17 +43,51 @@ public class MachineService {
         machineRepository.save(machine);
     }
 
+    @Transactional
     public void stopMachine(Long machineId) {
         Machine machine = machineRepository.findById(machineId).orElse(null);
-        machine.setStatus(MachineStatus.STOPPED);
-        machineRepository.save(machine);
-        Random random = new Random();
-        int randomSeconds = random.nextInt(6) + 10;
+        int randomSeconds = generateRandomSeconds(5, 10);
         try{
             Thread.sleep(randomSeconds*1000);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
         }
+        MachineStateMachine.makeStateTransition(machine, MachineStateMachine.Event.STOP);
+        
+        /*
+         * In assignment text it was stated that machine can be stopped only if it is in RUNNING state,
+         * and that it goes to RUNNING state after it is stopped after 5-10 seconds. It didn't make sense
+         * to me, but I still implemented it in that way. 
+         */
 
+    }
+    
+    @Transactional
+    public void restartMachine(Long machineId) {
+      Machine machine = machineRepository.findById(machineId).orElse(null);
+      machineRepository.save(machine);
+      int randomSeconds = generateRandomSeconds(5, 10);
+      try{
+          Thread.sleep(randomSeconds*1000/2);
+          machine.setStatus(MachineStatus.STOPPED);
+          Thread.sleep(randomSeconds*1000/2);
+          machine.setStatus(MachineStatus.RUNNING);
+      } catch (InterruptedException ie) {
+          Thread.currentThread().interrupt();
+      }
+    }
+    
+    public void destroyMachine(Long machineId) {
+      Machine machine = machineRepository.findById(machineId).orElse(null);
+      if(machine.getStatus().equals(MachineStatus.STOPPED)) {
+        machine.setActive(false);
+        machineRepository.save(machine);
+      }
+    }
+    
+    private int generateRandomSeconds(int min, int max) {
+      Random random = new Random();
+      int randomSeconds = random.nextInt(max + 1 - min) + min;
+    }
     }
 }

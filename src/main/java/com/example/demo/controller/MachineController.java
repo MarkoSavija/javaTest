@@ -26,6 +26,16 @@ public class MachineController {
     public void stop(@RequestParam Long machineId){
         machineService.startMachine(machineId);
     }
+    
+    @GetMapping(value = "/restart")
+    public void restart(@RequestParam Long machineId){
+        machineService.restartMachine(machineId);
+    }
+    
+    @GetMapping(value = "/destroy")
+    public void destroy(@RequestParam Long machineId){
+        machineService.destroyMachine(machineId);
+    }
 
     
 
