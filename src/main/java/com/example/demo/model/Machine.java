@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -11,10 +12,13 @@ public class Machine {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
 
     @NotNull
     private String uid;
+    
+    private String name;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -68,6 +72,14 @@ public class Machine {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
     }
 
     @PrePersist

@@ -1,7 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Machine;
+import com.example.demo.model.MachineStatus;
 import com.example.demo.service.MachineService;
+import java.sql.Date;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +40,11 @@ public class MachineController {
         machineService.destroyMachine(machineId);
     }
 
-    
+    @GetMapping(value = "/search")
+    public List<Machine> searchMachines(@RequestParam String name, @RequestParam List<MachineStatus> status, 
+        @RequestParam Date dateFrom, @RequestParam Date dateTo){
+        return machineService.search(name, status, dateFrom, dateTo);
+    } 
 
 
 }

@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.stereotype.Service;
-
+import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 import javax.transaction.Transactional;
 
@@ -87,7 +88,11 @@ public class MachineService {
     
     private int generateRandomSeconds(int min, int max) {
       Random random = new Random();
-      int randomSeconds = random.nextInt(max + 1 - min) + min;
+      return random.nextInt(max + 1 - min) + min;
     }
+    
+    public List<Machine> search(String name, List<MachineStatus> status, Date dateFrom, Date dateTo){
+      return machineRepository.search(name, status, dateFrom, dateTo);
     }
+    
 }
