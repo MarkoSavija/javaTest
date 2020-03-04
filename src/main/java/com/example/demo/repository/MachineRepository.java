@@ -10,7 +10,7 @@ import com.example.demo.model.MachineStatus;
 
 public interface MachineRepository extends JpaRepository<Machine, Long> {
   
-  @Query("SELECT * "
+  @Query("SELECT m "
       + " FROM machines m "
       + " WHERE m.name like '%:name%'"
       + " AND m.status in :status"
